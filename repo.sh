@@ -5,30 +5,30 @@ echo "I want to git"
 if [ "$1" = "update" -o "$1" = "pull" ]
 then
     shift
-    sh subscripts/pull.sh "$@"
+    sh gitSubscripts/pull.sh "$@"
 
 #commit (main / submodules / subtrees)
 elif [ "$1" = "commit" ]
 then
     shift
-    sh subscripts/commit.sh "$@"
+    sh gitSubscripts/commit.sh "$@"
 
 #stage (stage files)
 elif [ "$1" = "stage" ]
 then
     shift
-    sh subscripts/stage.sh "$@"
+    sh gitSubscripts/stage.sh "$@"
 
 #push
 elif [ "$1" = "push" ]
 then
     shift
-    sh subscripts/push.sh "$@"
+    sh gitSubscripts/push.sh "$@"
 
 elif [ "$1" = "submodule" ]
 then
     shift
-    sh subscripts/submodule.sh "$@"
+    sh gitSubscripts/submodule.sh "$@"
 
 #log
 elif [ "$1" = "log" ]

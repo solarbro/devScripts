@@ -62,20 +62,7 @@ then
         then
             sh gnuBuildScripts/buildGCC_Debug.sh
         fi
-        if [ "$?" -eq 0 ]
-        then
-            if [ "$1" = "clang" ]
-            then
-                shift; shift; shift
-                sh clangBuildScripts/runClang.sh "$@"
-            elif [ "$1" = "gnu" ]
-            then
-                shift; shift; shift
-                sh gnuBuildScripts/rungnu.sh "$@"
-            fi
-        else
-            echo -e "${RED}Build failed${NC}"
-        fi
+
     #######################################
     #           build in release          #
     #######################################
@@ -89,19 +76,6 @@ then
         then
             sh gnuBuildScripts/buildGCC_Release.sh
         fi
-        if [ "$?" -eq 0 ]
-        then
-            shift; shift; shift
-            if [ "$1" = "clang" ]
-            then
-                sh clangBuildScripts/runClang.sh "$@"
-            elif [ "$1" = "gnu" ]
-            then
-                sh gnuBuildScripts/rungnu.sh "$@"
-            fi
-        else
-            echo -e "${\033[0;31m}Build failed${\033[0m}"
-        fi
     #######################################
     #           Invalid argument          #
     #######################################
@@ -113,7 +87,25 @@ then
             echo "Invalid command \"$3\""
         fi
         echo "Available commands are \"--debug\" and \"--release\""
+        exit 1
     fi
+    #######################################
+    #        Run if build succeeded       #
+    #######################################
+    if [ "$?" -eq 0 ]
+        then
+            if [ "$1" = "clang" ]
+            then
+                shift; shift; shift
+                sh clangBuildScripts/runClang.sh "$@"
+            elif [ "$1" = "gnu" ]
+            then
+                shift; shift; shift
+                sh gnuBuildScripts/rungnu.sh "$@"
+            fi
+        else
+            echo -e "${RED}Build failed${NC}"
+        fi
 ################################################
 #              Invalid argument                #
 ################################################
