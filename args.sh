@@ -43,7 +43,32 @@ then
     then
         sh gnuBuildScripts/cleanGCC.sh
     fi
-    echo "Cleaned "$1" build artefacts"
+################################################
+#            Clean and rebuild                 #
+################################################
+elif [ "$2" = "rebuild" ]
+then
+    if [ "$1" = "clang" ]
+    then
+        sh clangBuildScripts/cleanClang.sh
+        if [ "$3" = "--debug" ]
+        then
+            sh clangBuildScripts/buildClang_Debug.sh
+        elif [ "$3" = "--release" ]
+        then
+            sh clangBuildScripts/buildClang_Release.sh
+        fi
+    elif [ "$1" = "gnu" ]
+    then
+        sh gnuBuildScripts/cleanGCC.sh
+        if [ "$3" = "--debug" ]
+        then
+            sh gnuBuildScripts/buildGCC_Debug.sh
+        elif [ "$3" = "--release" ]
+        then
+            sh gnuBuildScripts/buildGCC_Release.sh
+        fi
+    fi
 ################################################
 #                Build and run                 #
 ################################################
