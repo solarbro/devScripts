@@ -1,20 +1,28 @@
 import os
 import subprocess
+from shutil import copy2
 
 def run(config, args):
-    print("Running Clang executable")
-    print(config)
-    for a in args:
-        print(a)
 
     if config == "--debug":
         ExePath = "../buildClang_debug/bin64"
+        #create gdbinit script
+        copy2('gdbInit/gdbinit', '../buildClang_debug/bin64/.gdbinit')
+        gdbRunCommand = 'run ' + " ".join(args)
+        #add run command
+        with open('../buildClang_debug/bin64/.gdbinit', 'a') as file:
+            file.write(gdbRunCommand)
     elif config == "--release":
         ExePath = "../buildClang_release/bin64"
 
     os.chdir(ExePath)
 
     Exes = os.listdir('.')
+    while len(Exes) > 0 and Exes[0][0] == '.':
+        Exes.pop(0)
+    # if len(Exes) > 0:
+    #     if Exes[0] == ".gdbinit":
+    #         Exes.pop(0)
 
     if len(Exes) == 1:
         appName = "./" + Exes[0]
@@ -34,7 +42,8 @@ def run(config, args):
         appLaunch = [appName] + args
 
     if config == "--debug":
-        print("Launching in GDB")
+        gdbLaunch = ['gdb', '-iex', "add-auto-load-safe-path .gdbinit", appName]
+        result = subprocess.call(gdbLaunch)
     elif config == "--release":
         result = subprocess.call(appLaunch)
         print("Program quit with exit code {}".format(result))
