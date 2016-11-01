@@ -1,6 +1,13 @@
 import os
 import subprocess
 from shutil import copy2
+import fileinput
+
+def insertArgs(appArgsList):
+    for line in fileinput.FileInput("../buildClang_debug/bin64/.gdbinit", inplace=1):
+        if "run" in line:
+            line = line.replace(line, "run " + " ".join(appArgsList) + " ")
+        print(line[:len(line)-1])
 
 def run(config, args):
 
@@ -8,10 +15,8 @@ def run(config, args):
         ExePath = "../buildClang_debug/bin64"
         #create gdbinit script
         copy2('gdbInit/gdbinit', '../buildClang_debug/bin64/.gdbinit')
-        gdbRunCommand = 'run ' + " ".join(args)
         #add run command
-        with open('../buildClang_debug/bin64/.gdbinit', 'a') as file:
-            file.write(gdbRunCommand)
+        insertArgs(args)
     elif config == "release":
         ExePath = "../buildClang_release/bin64"
 
@@ -42,7 +47,7 @@ def run(config, args):
         appLaunch = [appName] + args
 
     if config == "debug":
-        gdbLaunch = ['gdb', '-iex', "add-auto-load-safe-path .gdbinit", appName]
+        gdbLaunch = ['gdb', '-iex', "add-auto-load-safe-path .gdbinit", "-quiet", appName]
         result = subprocess.call(gdbLaunch)
     elif config == "release":
         result = subprocess.call(appLaunch)

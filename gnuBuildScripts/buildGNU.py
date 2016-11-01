@@ -2,7 +2,7 @@ import os
 import subprocess
 
 def build(config):
-    if not config == "--debug" and not config == "release":
+    if not config == "debug" and not config == "release":
         print("Invalid build configuration chosen")
         print("Valid options are \"debug\" and \"release\"")
         return
