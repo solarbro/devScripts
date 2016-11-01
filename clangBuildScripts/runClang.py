@@ -4,7 +4,7 @@ from shutil import copy2
 
 def run(config, args):
 
-    if config == "--debug":
+    if config == "debug":
         ExePath = "../buildClang_debug/bin64"
         #create gdbinit script
         copy2('gdbInit/gdbinit', '../buildClang_debug/bin64/.gdbinit')
@@ -12,7 +12,7 @@ def run(config, args):
         #add run command
         with open('../buildClang_debug/bin64/.gdbinit', 'a') as file:
             file.write(gdbRunCommand)
-    elif config == "--release":
+    elif config == "release":
         ExePath = "../buildClang_release/bin64"
 
     os.chdir(ExePath)
@@ -41,10 +41,10 @@ def run(config, args):
         appName = "./" + Exes[appSelect - 1]
         appLaunch = [appName] + args
 
-    if config == "--debug":
+    if config == "debug":
         gdbLaunch = ['gdb', '-iex', "add-auto-load-safe-path .gdbinit", appName]
         result = subprocess.call(gdbLaunch)
-    elif config == "--release":
+    elif config == "release":
         result = subprocess.call(appLaunch)
         print("Program quit with exit code {}".format(result))
     os.chdir('../../devScripts/')

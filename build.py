@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+import argparse
 import sys
 import subprocess
 
@@ -14,12 +15,15 @@ import cleanGNU
 import runGNU
 
 # print("I'm trying to build")
+###########################################
+#            Parse switches               #
+###########################################
 
 ###########################################
 #                  HELP                   #
 ###########################################
 def printHelpMsg():
-    print("[List of allowed arguments]")
+    print("Recognized compiler names are \"clang\" or \"gnu\"")
 
 def printBuildConfigHelp():
         print("Valid options are \"--debug\" and \"--release\"")
@@ -29,61 +33,44 @@ def printBuildConfigHelp():
 ###########################################
 def clangOptions():
     # print(sys.argv[2:])
-    if len(sys.argv) < 3:
-        print("No build configurations provided")
-        printBuildConfigHelp()
+    if argsList.clean:
+        cleanClang.clean(argsList.config)
+    buildResult = buildClang.build(argsList.config)
+    if buildResult == 0:
+        if argsList.run:
+            runClang.run(argsList.config, argsList.args)
     else:
-        RunExecutable = False
-        if len(sys.argv) > 3:
-            if sys.argv[3] == "--rebuild":
-                cleanClang.clean(sys.argv[2])
-            elif sys.argv[3] == "--run":
-                RunExecutable = True
-            else:
-                print("Unknown secondary argument {}".format(sys.argv[3]))
-        buildResult = buildClang.build(sys.argv[2])
-        if RunExecutable:
-            if buildResult == 0:
-                runClang.run(sys.argv[2], sys.argv[4:])
-            else:
-                print("Build failed")
+        print("Build failed")
 ###########################################
 #              GNU options                #
 ###########################################
 def gnuOptions():
-    RunExecutable = False
-    if len(sys.argv) < 3:
-        print("No build configurations provided")
-        printBuildConfigHelp()
+    if argsList.clean:
+        cleanGNU.clean(argsList.config)
+    buildResult = buildGNU.build(argsList.config)
+    if buildResult == 0:
+        if argsList.run:
+            runGNU.run(argsList.config, argsList.args)
     else:
-        if len(sys.argv) > 3:
-            if sys.argv[3] == "--rebuild":
-                cleanGNU.clean(sys.argv[2])
-            elif sys.argv[3] == "--run":
-                RunExecutable = True
-            else:
-                print("Unknown secondary argument {}".format(sys.argv[3]))
-        buildResult = buildGNU.build(sys.argv[2])
-        if RunExecutable:
-            if buildResult == 0:
-                runGNU.run(sys.argv[2], sys.argv[4:])
-            else:
-                print("Build failed")
+        print("Build failed")
 
 
-if len(sys.argv) == 1:
-    print("No arguments provided")
-    printHelpMsg()
+#init args list
+parser = argparse.ArgumentParser(description='Build project')
+parser.add_argument("-b", "--compiler", type=str, help="Specify compiler. Use either \"clang\" or \"gnu\"", required=True, default=None)
+# parser.add_argument("gnu", help = "build project using the \"gnu\" compiler")
+parser.add_argument("-c", "--config", type=str, help="use \"release\" or \"debug\" configuration", required=True, default=None)
+parser.add_argument("--rebuild", help="clean and rebuild project", dest="clean", action="store_const", const=True, default=False, required=False)
+parser.add_argument("--run", dest="run", help="run project executable if build succeeds", action="store_const", const=True, default=False, required=False)
+parser.add_argument("-a", "--args", type=str, help="pass arguments to the application when using the \"--run\" switch.", nargs='+', required=False, default=[])
+argsList = parser.parse_args();
+
+if argsList.compiler == "clang":
+    # print("Building with clang")
+    clangOptions()
+elif argsList.compiler == "gnu":
+    # print("Building with gnu")
+    gnuOptions()
 else:
-    if sys.argv[1] == "--help":
-        # print("Build help")
-        printHelpMsg()
-    elif sys.argv[1] == "clang":
-        # print("Building with clang")
-        clangOptions()
-    elif sys.argv[1] == "gnu":
-        # print("Building with gnu")
-        gnuOptions()
-    else:
-        print("Unrecognized arguments")
-        printHelpMsg()
+    print("Unrecognized compiler: {}".format(argsList.compiler))
+    printHelpMsg()
