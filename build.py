@@ -58,7 +58,6 @@ def gnuOptions():
 #init args list
 parser = argparse.ArgumentParser(description='Build project')
 parser.add_argument("-b", "--compiler", type=str, help="Specify compiler. Use either \"clang\" or \"gnu\"", required=True, default=None)
-# parser.add_argument("gnu", help = "build project using the \"gnu\" compiler")
 parser.add_argument("-c", "--config", type=str, help="use \"release\" or \"debug\" configuration", required=True, default=None)
 parser.add_argument("--rebuild", help="clean and rebuild project", dest="clean", action="store_const", const=True, default=False, required=False)
 parser.add_argument("--run", dest="run", help="run project executable if build succeeds", action="store_const", const=True, default=False, required=False)
